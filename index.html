@@ -1201,7 +1201,9 @@ function showDefault() {
 // Era link clicks
 document.querySelectorAll('.era-link').forEach(link => {
   link.addEventListener('click', () => {
-    showScreen(parseInt(link.dataset.era));
+    const eraIndex = parseInt(link.dataset.era);
+    showScreen(eraIndex);
+    plausible('Era Switch', {props: {era: eras[eraIndex].name}});
   });
 });
 
