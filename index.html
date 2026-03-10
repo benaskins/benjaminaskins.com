@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benjamin Askins</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600&family=Courier+Prime&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --vt: 'VT323', monospace;
+    --plex: 'IBM Plex Mono', monospace;
+    --courier: 'Courier Prime', 'Courier New', monospace;
+  }
+
+  body {
+    background: #111114;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+    transition: background 0.6s;
+  }
+
+  /* ==========================================
+     OUTER FRAME
+     ========================================== */
+  .frame {
+    width: 100%;
+    max-width: 680px;
+    position: relative;
+  }
+
+  .screen-container {
+    position: relative;
+  }
+
+  .terminal-screen {
+    width: 100%;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .terminal-screen.active {
+    opacity: 1;
+    position: relative;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  /* Shared CRT effects for retro terminals */
+  .crt-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .crt-overlay.scanlines::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,0,0,0.18) 2px, rgba(0,0,0,0.18) 4px
+    );
+  }
+
+  .crt-overlay.vignette::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,0.35) 100%);
+  }
+
+  /* ==========================================
+     DEFAULT — CLEAN CARD
+     ========================================== */
+  .default-card {
+    background: #18181c;
+    border: 1px solid #2a2a30;
+    border-radius: 10px;
+    padding: 40px 36px;
+    font-family: var(--plex);
+    color: #c8c8d0;
+    line-height: 1.7;
+  }
+
+  .default-name {
+    font-size: 22px;
+    font-weight: 600;
+    color: #f0f0f4;
+    letter-spacing: -0.3px;
+  }
+
+  .default-alias {
+    font-size: 15px;
+    color: #7a7a90;
+    margin-top: 2px;
+  }
+
+  .default-divider {
+    border: none;
+    border-top: 1px solid #2a2a30;
+    margin: 20px 0;
+  }
+
+  .default-bio {
+    font-size: 14px;
+    color: #9898a8;
+    line-height: 1.75;
+  }
+
+  .default-links {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+  }
+
+  .default-links a {
+    color: #7a9ec7;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .default-links a:hover { color: #a8c4e0; }
+
+  .default-links .email-link {
+    color: #7a9ec7;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .default-links .email-link:hover { color: #a8c4e0; }
+
+  .default-projects {
+    margin-top: 24px;
+    font-size: 13px;
+  }
+
+  .default-projects-label {
+    color: #5a5a6a;
+    margin-bottom: 6px;
+  }
+
+  .default-projects-list {
+    display: flex;
+    gap: 16px;
+  }
+
+  .default-projects-list a {
+    color: #8888a0;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .default-projects-list a:hover { color: #a8c4e0; }
+
+  .default-hook {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #2a2a30;
+  }
+
+  .default-hook-text {
+    font-size: 13px;
+    color: #5a5a6a;
+    font-style: italic;
+    margin-bottom: 14px;
+  }
+
+  .era-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    font-size: 13px;
+  }
+
+  .era-link {
+    color: #5a6a7a;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+
+  .era-link:hover { color: #a0b0c0; }
+  .era-link.active { color: #c0d0e0; }
+
+  .back-link {
+    display: none;
+    font-family: var(--plex);
+    font-size: 12px;
+    color: rgba(255,255,255,0.2);
+    cursor: pointer;
+    text-align: center;
+    margin-top: 16px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: rgba(255,255,255,0.45); }
+  .back-link.visible { display: block; }
+
+  /* ==========================================
+     IBM 3270 / MVS TSO
+     ========================================== */
+  .mvs-screen {
+    background: #001a00;
+    font-family: var(--vt);
+    color: #33ff33;
+    padding: 0;
+    border: 3px solid #1a3a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(51,255,51,0.06), inset 0 0 80px rgba(0,0,0,0.4);
+  }
+
+  .mvs-body {
+    padding: 16px 20px;
+    min-height: 460px;
+    display: flex;
+    flex-direction: column;
+    text-shadow: 0 0 6px rgba(51,255,51,0.25);
+    font-size: 18px;
+    line-height: 1.45;
+  }
+
+  .mvs-field-bright { color: #7fff7f; }
+  .mvs-field-white { color: #ffffff; text-shadow: 0 0 8px rgba(255,255,255,0.2); }
+  .mvs-field-red { color: #ff4444; }
+  .mvs-field-yellow { color: #ffff33; }
+  .mvs-field-turq { color: #33ffff; }
+  .mvs-field-dim { color: rgba(51,255,51,0.35); }
+
+  .mvs-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .mvs-ruler {
+    color: rgba(51,255,51,0.15);
+    margin: 8px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .mvs-row { display: flex; gap: 0; }
+  .mvs-label { color: #33ffff; min-width: 140px; flex-shrink: 0; }
+  .mvs-value { color: #7fff7f; }
+  .mvs-spacer { flex: 1; }
+
+  .mvs-status-bar {
+    background: #004400;
+    color: #33ff33;
+    font-family: var(--vt);
+    font-size: 16px;
+    padding: 6px 20px;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid rgba(51,255,51,0.15);
+    text-shadow: 0 0 4px rgba(51,255,51,0.2);
+  }
+
+  .mvs-pfkeys {
+    background: #002200;
+    color: rgba(51,255,51,0.4);
+    font-family: var(--vt);
+    font-size: 14px;
+    padding: 6px 20px;
+    border-top: 1px solid rgba(51,255,51,0.08);
+  }
+
+  /* ==========================================
+     VMS / DCL
+     ========================================== */
+  .vms-screen {
+    background: #1a0a2e;
+    font-family: var(--vt);
+    color: #ffb347;
+    padding: 0;
+    border: 3px solid #2a1540;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(255,179,71,0.04), inset 0 0 80px rgba(0,0,0,0.4);
+  }
+
+  .vms-body {
+    padding: 20px 24px;
+    min-height: 460px;
+    text-shadow: 0 0 5px rgba(255,179,71,0.18);
+    font-size: 18px;
+    line-height: 1.5;
+  }
+
+  .vms-prompt { color: #ffb347; }
+  .vms-bright { color: #ffd085; }
+  .vms-green { color: #33ff77; text-shadow: 0 0 8px rgba(51,255,119,0.25); }
+  .vms-dim { color: rgba(255,179,71,0.35); }
+
+  .vms-dir-entry { display: flex; gap: 8px; }
+  .vms-dir-name { min-width: 180px; color: #ffd085; }
+  .vms-dir-size { min-width: 60px; text-align: right; color: rgba(255,179,71,0.5); }
+  .vms-dir-date { color: rgba(255,179,71,0.4); }
+
+  /* ==========================================
+     UNIX XTERM
+     ========================================== */
+  .unix-screen {
+    background: #000000;
+    font-family: var(--plex);
+    color: #00cc00;
+    padding: 0;
+    border: 3px solid #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(0,204,0,0.04), inset 0 0 60px rgba(0,0,0,0.3);
+  }
+
+  .unix-titlebar {
+    background: #2a2a2a;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: #888;
+    text-align: center;
+    border-bottom: 1px solid #333;
+    font-family: var(--plex);
+  }
+
+  .unix-body {
+    padding: 16px 20px;
+    min-height: 440px;
+    font-size: 14px;
+    line-height: 1.65;
+    text-shadow: 0 0 3px rgba(0,204,0,0.15);
+  }
+
+  .unix-user { color: #00ff41; font-weight: 600; }
+  .unix-host { color: #00ff41; }
+  .unix-path { color: #5555ff; font-weight: 600; }
+  .unix-cmd { color: #cccccc; }
+  .unix-comment { color: #666666; }
+  .unix-output { color: #00cc00; }
+  .unix-highlight { color: #ffffff; }
+  .unix-link-color { color: #5599ff; }
+  .unix-exec { color: #00ff41; }
+  .unix-dim { color: #336633; }
+
+  .unix-ls-entry {
+    display: grid;
+    grid-template-columns: 90px 60px 1fr;
+    gap: 4px;
+  }
+
+  .unix-perms { color: #888; }
+
+  /* ==========================================
+     CDE / MOTIF
+     ========================================== */
+  .cde-screen {
+    background: #5f7080;
+    padding: 4px;
+    border: none;
+    border-radius: 0;
+  }
+
+  .cde-window { background: #aeb2c3; border: 2px outset #d0d4e0; }
+
+  .cde-titlebar {
+    background: linear-gradient(180deg, #506070 0%, #3a4a5a 100%);
+    padding: 3px 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .cde-btn {
+    width: 18px; height: 18px;
+    background: #8a9db0;
+    border: 2px outset #b0c0d0;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .cde-btn:active { border-style: inset; }
+
+  .cde-title-text {
+    flex: 1; text-align: center;
+    font-family: var(--plex); font-size: 12px; font-weight: 600;
+    color: #e0e4f0; letter-spacing: 0.5px;
+  }
+
+  .cde-menubar {
+    background: #aeb2c3;
+    border-bottom: 2px groove #d0d4e0;
+    padding: 2px 8px;
+    display: flex; gap: 0;
+  }
+
+  .cde-menu-item {
+    font-family: var(--plex); font-size: 12px;
+    color: #1a1a2e; padding: 2px 10px; cursor: pointer;
+  }
+
+  .cde-menu-item:hover { background: #506070; color: #fff; }
+
+  .cde-terminal {
+    background: #1e2030;
+    border: 2px inset #8090a0;
+    margin: 4px;
+    padding: 14px 16px;
+    min-height: 420px;
+    font-family: var(--courier);
+    font-size: 14px;
+    line-height: 1.6;
+    color: #d4cfc4;
+  }
+
+  .cde-prompt { color: #8cc8ff; }
+  .cde-output { color: #d4cfc4; }
+  .cde-bright { color: #ffffff; }
+  .cde-accent { color: #8cc8ff; }
+  .cde-dim { color: rgba(212,207,196,0.35); }
+
+  /* ==========================================
+     WINDOWS NT CMD
+     ========================================== */
+  .nt-screen {
+    background: #c0c0c0;
+    padding: 3px;
+    border: 2px outset #dfdfdf;
+    border-radius: 0;
+  }
+
+  .nt-titlebar {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    padding: 2px 3px;
+    display: flex; align-items: center; gap: 2px;
+  }
+
+  .nt-icon {
+    width: 16px; height: 16px;
+    background: #000; border: 1px solid #808080;
+    margin-right: 4px; font-size: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #c0c0c0; font-family: var(--plex);
+  }
+
+  .nt-title-text {
+    flex: 1;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-size: 11px; font-weight: 700; color: #ffffff;
+  }
+
+  .nt-btn {
+    width: 16px; height: 14px;
+    background: #c0c0c0; border: 2px outset #dfdfdf;
+    font-size: 8px; font-family: 'Segoe UI', sans-serif; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #000;
+  }
+
+  .nt-btn:active { border-style: inset; }
+
+  .nt-terminal {
+    background: #0c0c0c;
+    padding: 12px 16px;
+    min-height: 440px;
+    font-family: var(--courier);
+    font-size: 14px; line-height: 1.55;
+    color: #c0c0c0;
+  }
+
+  .nt-white { color: #ffffff; }
+  .nt-yellow { color: #ffff54; }
+  .nt-green { color: #54ff54; }
+  .nt-cyan { color: #54ffff; }
+  .nt-dim { color: #606060; }
+
+  /* ==========================================
+     MACOS TERMINAL
+     ========================================== */
+  .mac-screen {
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+  }
+
+  .mac-titlebar {
+    background: #2d2d2d;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .mac-dots { display: flex; gap: 7px; }
+  .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .mac-dot.red { background: #ff5f57; }
+  .mac-dot.yellow { background: #ffbd2e; }
+  .mac-dot.green { background: #28ca41; }
+
+  .mac-title-text {
+    flex: 1; text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 13px; color: #999;
+  }
+
+  .mac-terminal {
+    background: rgba(30, 30, 36, 0.97);
+    padding: 16px 20px;
+    min-height: 440px;
+    font-family: 'Menlo', var(--plex);
+    font-size: 13px; line-height: 1.7; color: #cccccc;
+  }
+
+  .mac-prompt { color: #5af78e; }
+  .mac-path { color: #57c7ff; }
+  .mac-cmd { color: #f1f1f0; }
+  .mac-output { color: #cccccc; }
+  .mac-highlight { color: #f1f1f0; }
+  .mac-blue { color: #57c7ff; }
+  .mac-dim { color: #555566; }
+  .mac-yellow { color: #f3f99d; }
+
+  /* ==========================================
+     CLAUDE CODE
+     ========================================== */
+  .claude-screen {
+    background: #120e22;
+    border: 1px solid #2a2245;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(200,120,255,0.03), 0 10px 40px rgba(0,0,0,0.4);
+  }
+
+  .claude-body {
+    padding: 20px 24px;
+    min-height: 460px;
+    font-family: var(--plex);
+    font-size: 13px; line-height: 1.7;
+    color: #d4c5f0;
+  }
+
+  .claude-box-top { color: #6b5f8a; }
+  .claude-box-mid { color: #6b5f8a; }
+  .claude-box-bot { color: #6b5f8a; }
+  .claude-label { color: #e8935a; }
+  .claude-text { color: #d4c5f0; }
+  .claude-bright { color: #f0e4ff; }
+  .claude-dim { color: rgba(212,197,240,0.3); }
+  .claude-orange { color: #e8935a; text-shadow: 0 0 8px rgba(232,147,90,0.15); }
+  .claude-green { color: #5af78e; }
+  .claude-blue { color: #7aa2f7; }
+  .claude-purple { color: #bb9af7; }
+
+  .claude-tool-block {
+    background: rgba(200,120,255,0.04);
+    border-left: 2px solid #6b5f8a;
+    padding: 8px 14px;
+    margin: 8px 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .claude-hr {
+    border: none;
+    border-top: 1px solid rgba(200,120,255,0.08);
+    margin: 10px 0;
+  }
+
+  /* Links */
+  a.screen-link {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  a.screen-link:hover { opacity: 0.7; }
+
+  .clickable { cursor: pointer; transition: opacity 0.2s; }
+  .clickable:hover { opacity: 0.7; }
+
+  /* Tooltip */
+  .alias-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+  }
+
+  .alias-tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    width: 320px;
+    background: #1e1e24;
+    border: 1px solid #3a3a44;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-size: 12px;
+    line-height: 1.65;
+    color: #9898a8;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform: translateY(4px);
+    z-index: 100;
+  }
+
+  .alias-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 24px;
+    border: 6px solid transparent;
+    border-top-color: #3a3a44;
+  }
+
+  .alias-wrapper:hover .alias-tooltip {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .alias-tooltip .tooltip-pronunciation {
+    color: #7a9ec7;
+    font-style: italic;
+  }
+
+  .alias-tooltip .tooltip-example {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--vt);
+    font-size: 14px;
+    color: #5a6a7a;
+  }
+
+  .alias-tooltip .tooltip-note {
+    display: block;
+    margin-top: 8px;
+    color: #5a5a6a;
+    font-style: italic;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    font-family: var(--plex);
+    font-size: 13px;
+    background: #1a1a2e;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7);
+    padding: 8px 24px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 2000;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Mobile */
+  @media (max-width: 520px) {
+    .default-card { padding: 28px 22px; }
+    .default-name { font-size: 19px; }
+    .mvs-body, .vms-body { font-size: 15px; padding: 12px 14px; }
+    .unix-body, .cde-terminal, .nt-terminal { font-size: 12px; padding: 12px 14px; }
+    .mac-terminal { font-size: 12px; }
+    .claude-body { font-size: 12px; }
+    .mvs-label { min-width: 100px; }
+    .vms-dir-name { min-width: 130px; }
+    .unix-ls-entry { grid-template-columns: 80px 40px 1fr; }
+    .mvs-status-bar, .mvs-pfkeys { font-size: 13px; padding: 4px 14px; }
+    .era-links { gap: 4px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="screen-container">
+
+    <!-- ====== DEFAULT CLEAN CARD ====== -->
+    <div class="terminal-screen active" id="screen-default">
+      <div class="default-card">
+        <div class="default-name">Benjamin Askins</div>
+        <div class="default-alias">
+          <span class="alias-wrapper">genlevel <span class="tooltip-pronunciation">/ˈdʒɛn.lɛv.əl/</span>
+            <div class="alias-tooltip">
+              Short for <em>generation level</em> — the version identifier on Computer Associates software distribution tapes.<span class="tooltip-example">CA-XCOM v12.0 Generation Level 1407 SP00</span><span class="tooltip-note">There's a story here. I'll tell it later.</span>
+            </div>
+          </span>
+        </div>
+
+        <hr class="default-divider">
+
+        <div class="default-bio">
+          Software engineer with 36 years of breadth and depth across
+          infrastructure, distributed systems, developer experience, and
+          platform engineering. Domains include banking, insurance,
+          micro-lending, logistics, manufacturing, and two-sided
+          digital marketplaces.<br><br>
+          Producing electronic music since 1991. Played live up and down
+          the east coast with Infusion in the early nineties, and around
+          Sydney and Canberra as genlevel through to the end of the
+          millennium. Releasing solo work intermittently ever since.<br><br>
+          Central Coast, NSW.
+        </div>
+
+        <div class="default-links">
+          <a href="https://github.com/benaskins" target="_blank">github.com/benaskins</a>
+          <a href="https://music.genlevel.com" target="_blank">music.genlevel.com</a>
+        </div>
+
+        <div class="default-projects">
+          <div class="default-projects-label">projects</div>
+          <div class="default-projects-list">
+            <a href="https://github.com/benaskins/aurelia" target="_blank">aurelia</a>
+            <a href="https://github.com/benaskins/axon" target="_blank">axon</a>
+            <a href="https://github.com/benaskins/lamina-mono" target="_blank">lamina</a>
+            <a href="https://github.com/benaskins/panopticon" target="_blank">panopticon</a>
+          </div>
+        </div>
+
+        <div class="default-hook">
+          <div class="default-hook-text">I never met a command line I didn't learn to love.</div>
+          <div class="era-links">
+            <span class="era-link" data-era="0">IBM 3270</span>
+            <span class="era-link" data-era="1">VMS</span>
+            <span class="era-link" data-era="2">xterm</span>
+            <span class="era-link" data-era="3">CDE</span>
+            <span class="era-link" data-era="4">Windows NT</span>
+            <span class="era-link" data-era="5">macOS</span>
+            <span class="era-link" data-era="6">Claude Code</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== IBM 3270 / MVS TSO ====== -->
+    <div class="terminal-screen" id="screen-0">
+      <div class="mvs-screen">
+        <div class="mvs-body">
+          <div class="mvs-header">
+            <span class="mvs-field-turq">ISPF/PDF 3.4</span>
+            <span class="mvs-field-turq">PERSONAL DATA SET LIST</span>
+            <span class="mvs-field-dim">ROW 1 OF 12</span>
+          </div>
+          <div class="mvs-ruler">────────────────────────────────────────────────────────────</div>
+          <div style="margin: 8px 0;">
+            <span class="mvs-field-turq">DSNAME LEVEL ===> </span>
+            <span class="mvs-field-white">BASKINS.IDENTITY.*</span>
+          </div>
+          <div class="mvs-ruler">────────────────────────────────────────────────────────────</div>
+          <div style="margin: 10px 0 6px;">
+            <div class="mvs-row"><span class="mvs-label">NAME</span><span class="mvs-field-white">BENJAMIN ASKINS</span></div>
+            <div class="mvs-row"><span class="mvs-label">ALIAS</span><span class="mvs-field-yellow">GENLEVEL</span></div>
+          </div>
+          <div class="mvs-ruler">────────────────────────────────────────────────────────────</div>
+          <div style="margin: 8px 0;">
+            <div class="mvs-row"><span class="mvs-label">ROLE</span><span class="mvs-value">SOFTWARE ENGINEER</span></div>
+            <div class="mvs-row"><span class="mvs-label">EXPERIENCE</span><span class="mvs-value">36 YEARS</span></div>
+            <div class="mvs-row"><span class="mvs-label">FOCUS</span><span class="mvs-value">INFRASTRUCTURE, DISTRIBUTED SYSTEMS,</span></div>
+            <div class="mvs-row"><span class="mvs-label"></span><span class="mvs-value">DEVELOPER EXPERIENCE, PLATFORM ENGINEERING</span></div>
+            <div class="mvs-row"><span class="mvs-label">DOMAINS</span><span class="mvs-value">BANKING, INSURANCE, MICRO-LENDING,</span></div>
+            <div class="mvs-row"><span class="mvs-label"></span><span class="mvs-value">LOGISTICS, MANUFACTURING, MARKETPLACES</span></div>
+            <div class="mvs-row"><span class="mvs-label">MUSIC</span><span class="mvs-field-yellow">PRODUCING SINCE 1991, RELEASING AS</span></div>
+            <div class="mvs-row"><span class="mvs-label"></span><span class="mvs-field-yellow">GENLEVEL SINCE 1997</span></div>
+            <div class="mvs-row"><span class="mvs-label">LOCATION</span><span class="mvs-value">CENTRAL COAST, NSW</span></div>
+          </div>
+          <div class="mvs-ruler">────────────────────────────────────────────────────────────</div>
+          <div style="margin: 8px 0;">
+            <span class="mvs-field-turq">LINKS:</span><br>
+            <div class="mvs-row"><span class="mvs-label">&nbsp; GITHUB</span><a href="https://github.com/benaskins" class="screen-link mvs-value" target="_blank">GITHUB.COM/BENASKINS</a></div>
+            <div class="mvs-row"><span class="mvs-label">&nbsp; MUSIC</span><a href="https://music.genlevel.com" class="screen-link mvs-value" target="_blank">MUSIC.GENLEVEL.COM</a></div>
+          </div>
+          <div class="mvs-spacer"></div>
+          <div style="margin-top: 8px;">
+            <span class="mvs-field-dim">PROJECTS: </span>
+            <a href="https://github.com/benaskins/aurelia" class="screen-link mvs-field-turq" target="_blank">AURELIA</a><span class="mvs-field-turq"> · </span><a href="https://github.com/benaskins/axon" class="screen-link mvs-field-turq" target="_blank">AXON</a><span class="mvs-field-turq"> · </span><a href="https://github.com/benaskins/lamina-mono" class="screen-link mvs-field-turq" target="_blank">LAMINA</a><span class="mvs-field-turq"> · </span><a href="https://github.com/benaskins/panopticon" class="screen-link mvs-field-turq" target="_blank">PANOPTICON</a>
+          </div>
+        </div>
+        <div class="mvs-status-bar">
+          <span>COMMAND ===> _</span>
+          <span>SCROLL ===> PAGE</span>
+        </div>
+        <div class="mvs-pfkeys">PF1=HELP  PF3=EXIT  PF5=RFIND  PF7=UP  PF8=DOWN  PF10=LEFT  PF11=RIGHT</div>
+        <div class="crt-overlay scanlines vignette"></div>
+      </div>
+    </div>
+
+    <!-- ====== VMS / DCL ====== -->
+    <div class="terminal-screen" id="screen-1">
+      <div class="vms-screen">
+        <div class="vms-body">
+          <div><span class="vms-dim">%SET-I-INTSET, login procedure complete</span></div>
+          <div style="margin-top: 4px;"><span class="vms-dim">GENLEVEL::BASKINS — OpenVMS V7.3-2 on node GENLVL</span></div>
+          <br>
+          <div><span class="vms-prompt">$ </span><span class="vms-bright">SHOW PERSONAL /FULL</span></div>
+          <br>
+          <div><span class="vms-green">Personal Information Display</span></div>
+          <br>
+          <div><span>&nbsp; Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="vms-bright">Benjamin Askins</span></div>
+          <div><span>&nbsp; Alias:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="vms-green">genlevel</span></div>
+          <div><span>&nbsp; Role:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>Software Engineer</span></div>
+          <div><span>&nbsp; Experience:&nbsp;&nbsp;&nbsp; </span><span>36 years — infrastructure, distributed systems,</span></div>
+          <div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>developer experience, platform engineering</span></div>
+          <div><span>&nbsp; Domains:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>Banking, insurance, micro-lending, logistics,</span></div>
+          <div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>manufacturing, two-sided digital marketplaces</span></div>
+          <div><span>&nbsp; Music:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>Producing since 1991, releasing as </span><span class="vms-green">genlevel</span></div>
+          <div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>since 1997</span></div>
+          <div><span>&nbsp; Location:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>Central Coast, NSW</span></div>
+          <br>
+          <div><span class="vms-prompt">$ </span><span class="vms-bright">DIR [.LINKS]</span></div>
+          <br>
+          <div class="vms-dim">&nbsp; Directory GENLEVEL$DISK:[BASKINS.LINKS]</div>
+          <br>
+          <div class="vms-dir-entry">
+            <a href="https://github.com/benaskins" class="screen-link vms-dir-name" target="_blank">GITHUB.COM;1</a>
+            <span class="vms-dir-size">1</span>
+            <span class="vms-dir-date">&nbsp; benaskins</span>
+          </div>
+          <div class="vms-dir-entry">
+            <a href="https://music.genlevel.com" class="screen-link vms-dir-name" target="_blank">MUSIC.COM;1</a>
+            <span class="vms-dir-size">1</span>
+            <span class="vms-dir-date">&nbsp; music.genlevel.com</span>
+          </div>
+          <br>
+          <div class="vms-dim">&nbsp; Total of 2 files.</div>
+          <br>
+          <div><span class="vms-prompt">$ </span><span class="vms-dim">█</span></div>
+        </div>
+        <div class="crt-overlay scanlines vignette"></div>
+      </div>
+    </div>
+
+    <!-- ====== UNIX XTERM ====== -->
+    <div class="terminal-screen" id="screen-2">
+      <div class="unix-screen">
+        <div class="unix-titlebar">xterm — ben@genlevel.net</div>
+        <div class="unix-body">
+<span class="unix-dim"># ~/.identity — sourced from bashrc</span>
+<br><br>
+<span class="unix-user">ben</span><span class="unix-dim">@</span><span class="unix-host">genlevel</span><span class="unix-dim">:</span><span class="unix-path">~</span><span class="unix-dim">$ </span><span class="unix-cmd">cat /etc/motd</span>
+<br><br>
+<span class="unix-highlight">Benjamin Askins</span> · <span class="unix-exec">genlevel</span>
+<br>
+<span class="unix-output">Software engineer, 36 years. Infrastructure, distributed</span>
+<br>
+<span class="unix-output">systems, developer experience, platform engineering.</span>
+<br>
+<span class="unix-output">Banking, insurance, micro-lending, logistics,</span>
+<br>
+<span class="unix-output">manufacturing, two-sided digital marketplaces.</span>
+<br>
+<span class="unix-output">Producing music since 1991. Releasing as genlevel</span>
+<br>
+<span class="unix-output">since 1997. Central Coast, NSW.</span>
+<br><br>
+<span class="unix-user">ben</span><span class="unix-dim">@</span><span class="unix-host">genlevel</span><span class="unix-dim">:</span><span class="unix-path">~</span><span class="unix-dim">$ </span><span class="unix-cmd">ls -la ~/links/</span>
+<br><br>
+<span class="unix-dim">total 2</span>
+<br>
+<div class="unix-ls-entry">
+  <span class="unix-perms">lrwxrwxrwx</span>
+  <span class="unix-dim">ben</span>
+  <a href="https://github.com/benaskins" class="screen-link unix-link-color" target="_blank">github -> github.com/benaskins</a>
+</div>
+<div class="unix-ls-entry">
+  <span class="unix-perms">lrwxrwxrwx</span>
+  <span class="unix-dim">ben</span>
+  <a href="https://music.genlevel.com" class="screen-link unix-link-color" target="_blank">music -> music.genlevel.com</a>
+</div>
+<br>
+<span class="unix-user">ben</span><span class="unix-dim">@</span><span class="unix-host">genlevel</span><span class="unix-dim">:</span><span class="unix-path">~</span><span class="unix-dim">$ </span><span class="unix-cmd">ps aux | grep projects</span>
+<br><br>
+<span class="unix-dim">ben&nbsp;&nbsp; 1001&nbsp; </span><a href="https://github.com/benaskins/aurelia" class="screen-link unix-exec" target="_blank">aurelia</a><span class="unix-dim">&nbsp;&nbsp;&nbsp;&nbsp; running</span>
+<br>
+<span class="unix-dim">ben&nbsp;&nbsp; 1002&nbsp; </span><a href="https://github.com/benaskins/axon" class="screen-link unix-exec" target="_blank">axon</a><span class="unix-dim">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; running</span>
+<br>
+<span class="unix-dim">ben&nbsp;&nbsp; 1003&nbsp; </span><a href="https://github.com/benaskins/lamina-mono" class="screen-link unix-exec" target="_blank">lamina</a><span class="unix-dim">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; running</span>
+<br>
+<span class="unix-dim">ben&nbsp;&nbsp; 1004&nbsp; </span><a href="https://github.com/benaskins/panopticon" class="screen-link unix-exec" target="_blank">panopticon</a><span class="unix-dim">&nbsp; running</span>
+<br><br>
+<span class="unix-user">ben</span><span class="unix-dim">@</span><span class="unix-host">genlevel</span><span class="unix-dim">:</span><span class="unix-path">~</span><span class="unix-dim">$ </span><span class="unix-dim">█</span>
+        </div>
+        <div class="crt-overlay scanlines vignette"></div>
+      </div>
+    </div>
+
+    <!-- ====== CDE / MOTIF ====== -->
+    <div class="terminal-screen" id="screen-3">
+      <div class="cde-screen">
+        <div class="cde-window" style="position: relative;">
+          <div class="cde-titlebar">
+            <div class="cde-btn"></div>
+            <div class="cde-title-text">dtterm — genlevel</div>
+            <div class="cde-btn"></div>
+            <div class="cde-btn"></div>
+          </div>
+          <div class="cde-menubar">
+            <span class="cde-menu-item">Window</span>
+            <span class="cde-menu-item">Edit</span>
+            <span class="cde-menu-item">Options</span>
+          </div>
+          <div class="cde-terminal">
+<span class="cde-dim">Solaris 2.6 — Common Desktop Environment</span>
+<br><br>
+<span class="cde-prompt">genlevel% </span><span class="cde-bright">finger baskins</span>
+<br><br>
+<span class="cde-accent">Login: baskins</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cde-accent">Name: Benjamin Askins</span>
+<br>
+<span class="cde-output">Directory: /export/home/baskins&nbsp;&nbsp;&nbsp;&nbsp; Shell: /bin/tcsh</span>
+<br>
+<span class="cde-output">No unread mail.</span>
+<br><br>
+<span class="cde-output">Plan:</span>
+<br>
+<span class="cde-bright">Software engineer</span><span class="cde-output">, 36 years. Infrastructure, distributed</span>
+<br>
+<span class="cde-output">systems, developer experience, platform engineering.</span>
+<br>
+<span class="cde-output">Banking, insurance, micro-lending, logistics,</span>
+<br>
+<span class="cde-output">manufacturing, two-sided digital marketplaces.</span>
+<br>
+<span class="cde-output">Producing music since 1991. Releasing as </span><span class="cde-accent">genlevel</span>
+<br>
+<span class="cde-output">since 1997. Central Coast, NSW.</span>
+<br><br>
+<span class="cde-output">Links:</span>
+<br>
+<span class="cde-output">&nbsp; </span><a href="https://github.com/benaskins" class="screen-link cde-accent" target="_blank">github.com/benaskins</a>
+<br>
+<span class="cde-output">&nbsp; </span><a href="https://music.genlevel.com" class="screen-link cde-accent" target="_blank">music.genlevel.com</a>
+<br><br>
+<span class="cde-output">Projects: </span><a href="https://github.com/benaskins/aurelia" class="screen-link cde-accent" target="_blank">aurelia</a><span class="cde-output">, </span><a href="https://github.com/benaskins/axon" class="screen-link cde-accent" target="_blank">axon</a><span class="cde-output">, </span><a href="https://github.com/benaskins/lamina-mono" class="screen-link cde-accent" target="_blank">lamina</a><span class="cde-output">, </span><a href="https://github.com/benaskins/panopticon" class="screen-link cde-accent" target="_blank">panopticon</a>
+<br><br>
+<span class="cde-prompt">genlevel% </span><span class="cde-dim">█</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== WINDOWS NT CMD ====== -->
+    <div class="terminal-screen" id="screen-4">
+      <div class="nt-screen">
+        <div class="nt-titlebar">
+          <div class="nt-icon">C:\</div>
+          <div class="nt-title-text">Command Prompt</div>
+          <div style="display:flex; gap:2px;">
+            <div class="nt-btn">_</div>
+            <div class="nt-btn">□</div>
+            <div class="nt-btn">×</div>
+          </div>
+        </div>
+        <div class="nt-terminal">
+<span class="nt-dim">Microsoft(R) Windows NT(TM)</span>
+<br>
+<span class="nt-dim">(C) Copyright 1985-1996 Microsoft Corp.</span>
+<br><br>
+<span>C:\WINNT\Profiles\baskins&gt; </span><span class="nt-white">type identity.txt</span>
+<br><br>
+<span class="nt-yellow">Benjamin Askins</span>
+<br>
+<span class="nt-green">genlevel</span>
+<br><br>
+<span>Software engineer, 36 years. Infrastructure,</span>
+<br>
+<span>distributed systems, developer experience,</span>
+<br>
+<span>platform engineering. Banking, insurance,</span>
+<br>
+<span>micro-lending, logistics, manufacturing,</span>
+<br>
+<span>two-sided digital marketplaces.</span>
+<br>
+<span>Producing music since 1991. Releasing as</span>
+<br>
+<span>genlevel since 1997. Central Coast, NSW.</span>
+<br><br>
+<span>C:\WINNT\Profiles\baskins&gt; </span><span class="nt-white">dir /b links\</span>
+<br><br>
+<a href="https://github.com/benaskins" class="screen-link nt-cyan" target="_blank">&nbsp; github.com/benaskins</a>
+<br>
+<a href="https://music.genlevel.com" class="screen-link nt-cyan" target="_blank">&nbsp; music.genlevel.com</a>
+<br><br>
+<span>C:\WINNT\Profiles\baskins&gt; </span><span class="nt-white">net start</span>
+<br><br>
+<span class="nt-dim">&nbsp; The following services are started:</span>
+<br><br>
+<a href="https://github.com/benaskins/aurelia" class="screen-link nt-green" target="_blank">&nbsp;&nbsp; AURELIA</a>
+<br>
+<a href="https://github.com/benaskins/axon" class="screen-link nt-green" target="_blank">&nbsp;&nbsp; AXON</a>
+<br>
+<a href="https://github.com/benaskins/lamina-mono" class="screen-link nt-green" target="_blank">&nbsp;&nbsp; LAMINA</a>
+<br>
+<a href="https://github.com/benaskins/panopticon" class="screen-link nt-green" target="_blank">&nbsp;&nbsp; PANOPTICON</a>
+<br><br>
+<span>C:\WINNT\Profiles\baskins&gt; </span><span class="nt-dim">_</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== macOS Terminal ====== -->
+    <div class="terminal-screen" id="screen-5">
+      <div class="mac-screen">
+        <div class="mac-titlebar">
+          <div class="mac-dots">
+            <div class="mac-dot red"></div>
+            <div class="mac-dot yellow"></div>
+            <div class="mac-dot green"></div>
+          </div>
+          <div class="mac-title-text">ben — ~</div>
+          <div style="width: 52px;"></div>
+        </div>
+        <div class="mac-terminal">
+<span class="mac-dim">Last login: Tue Mar 10 09:14:22 on ttys001</span>
+<br>
+<span class="mac-prompt">❯ </span><span class="mac-cmd">cat ~/.identity</span>
+<br><br>
+<span class="mac-highlight">&nbsp;&nbsp;Benjamin Askins</span>
+<br>
+<span class="mac-blue">&nbsp;&nbsp;genlevel</span>
+<br>
+<span class="mac-dim">&nbsp;&nbsp;─────────────────────────────────</span>
+<br>
+<span class="mac-dim">&nbsp;&nbsp;Role:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-output">Software Engineer</span>
+<br>
+<span class="mac-dim">&nbsp;&nbsp;Experience:&nbsp; </span><span class="mac-output">36 years</span>
+<br>
+<span class="mac-dim">&nbsp;&nbsp;Focus:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-output">Infrastructure · Distributed Systems</span>
+<br>
+<span class="mac-dim">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-output">Developer Experience · Platform Engineering</span>
+<br>
+<span class="mac-dim">&nbsp;&nbsp;Domains:&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-output">Banking · Insurance · Micro-lending</span>
+<br>
+<span class="mac-dim">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-output">Logistics · Manufacturing · Marketplaces</span>
+<br>
+<span class="mac-dim">&nbsp;&nbsp;Music:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-output">Producing since 1991, releasing as</span>
+<br>
+<span class="mac-dim">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-blue">genlevel</span><span class="mac-output"> since 1997</span>
+<br>
+<span class="mac-dim">&nbsp;&nbsp;Location:&nbsp;&nbsp;&nbsp; </span><span class="mac-output">Central Coast, NSW</span>
+<br><br>
+<span class="mac-prompt">❯ </span><span class="mac-cmd">cat ~/.links</span>
+<br><br>
+<span class="mac-output">&nbsp;&nbsp;</span><a href="https://github.com/benaskins" class="screen-link mac-blue" target="_blank">github.com/benaskins</a>
+<br>
+<span class="mac-output">&nbsp;&nbsp;</span><a href="https://music.genlevel.com" class="screen-link mac-blue" target="_blank">music.genlevel.com</a>
+<br><br>
+<span class="mac-prompt">❯ </span><span class="mac-cmd">brew services list | grep active</span>
+<br><br>
+<span class="mac-yellow">&nbsp;&nbsp;</span><a href="https://github.com/benaskins/aurelia" class="screen-link mac-yellow" target="_blank">aurelia</a><span class="mac-yellow">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-prompt">started</span>
+<br>
+<span class="mac-yellow">&nbsp;&nbsp;</span><a href="https://github.com/benaskins/axon" class="screen-link mac-yellow" target="_blank">axon</a><span class="mac-yellow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-prompt">started</span>
+<br>
+<span class="mac-yellow">&nbsp;&nbsp;</span><a href="https://github.com/benaskins/lamina-mono" class="screen-link mac-yellow" target="_blank">lamina</a><span class="mac-yellow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-prompt">started</span>
+<br>
+<span class="mac-yellow">&nbsp;&nbsp;</span><a href="https://github.com/benaskins/panopticon" class="screen-link mac-yellow" target="_blank">panopticon</a><span class="mac-yellow">&nbsp; </span><span class="mac-prompt">started</span>
+<br><br>
+<span class="mac-prompt">❯ </span><span class="mac-dim">█</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== CLAUDE CODE ====== -->
+    <div class="terminal-screen" id="screen-6">
+      <div class="claude-screen">
+        <div class="claude-body">
+<span class="claude-orange">Claude Code</span><span class="claude-dim"> v1.0.33</span>
+<br>
+<span class="claude-text">/Users/ben/dev/sites/benjaminaskins.net</span>
+<br>
+<span class="claude-dim">Model: claude-opus-4-6</span>
+<br><br>
+<span class="claude-dim">&gt;</span> <span class="claude-bright">who am I?</span>
+<br><br>
+<span class="claude-text">Let me check.</span>
+<br><br>
+<span class="claude-orange">⏺ </span><span class="claude-dim">Read(human-identity.md)</span>
+<br><br>
+<span class="claude-bright">Benjamin Askins</span> · <span class="claude-orange">genlevel</span>
+<br><br>
+<span class="claude-text">Software engineer, 36 years. Infrastructure,</span>
+<br>
+<span class="claude-text">distributed systems, developer experience, platform</span>
+<br>
+<span class="claude-text">engineering. Domains include banking, insurance,</span>
+<br>
+<span class="claude-text">micro-lending, logistics, manufacturing, and</span>
+<br>
+<span class="claude-text">two-sided digital marketplaces.</span>
+<br><br>
+<span class="claude-text">Producing music since 1991. Releasing as</span>
+<br>
+<span class="claude-orange">genlevel</span> <span class="claude-text">since 1997. Central Coast, NSW.</span>
+<br><br>
+<span class="claude-text">Links:</span>
+<br>
+<span class="claude-text">- </span><a href="https://github.com/benaskins" class="screen-link claude-blue" target="_blank">github.com/benaskins</a>
+<br>
+<span class="claude-text">- </span><a href="https://music.genlevel.com" class="screen-link claude-blue" target="_blank">music.genlevel.com</a>
+<br><br>
+<span class="claude-text">Current projects: </span><a href="https://github.com/benaskins/aurelia" class="screen-link claude-bright" target="_blank">aurelia</a><span class="claude-dim">,</span> <a href="https://github.com/benaskins/axon" class="screen-link claude-bright" target="_blank">axon</a><span class="claude-dim">,</span> <a href="https://github.com/benaskins/lamina-mono" class="screen-link claude-bright" target="_blank">lamina</a><span class="claude-dim">,</span> <a href="https://github.com/benaskins/panopticon" class="screen-link claude-bright" target="_blank">panopticon</a>
+<br><br>
+<span class="claude-dim">&gt;</span> <span class="claude-dim">█</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Back link (shown when viewing a retro era) -->
+<div class="back-link" id="backLink" onclick="showDefault()">← back</div>
+
+<div class="toast" id="toast">email copied to clipboard</div>
+
+<script>
+const eras = [
+  { name: 'IBM 3270', bg: '#000800' },
+  { name: 'VMS', bg: '#0d0620' },
+  { name: 'xterm', bg: '#0a0a0a' },
+  { name: 'CDE', bg: '#3b4e6e' },
+  { name: 'Windows NT', bg: '#1a1a2e' },
+  { name: 'macOS', bg: '#1a1a2e' },
+  { name: 'Claude Code', bg: '#0f0b1a' }
+];
+
+let currentScreen = 'default';
+
+function showScreen(id) {
+  document.querySelectorAll('.terminal-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  currentScreen = id;
+
+  // Update back link visibility
+  const backLink = document.getElementById('backLink');
+  if (id === 'default') {
+    backLink.classList.remove('visible');
+    document.body.style.background = '#111114';
+    // Clear active state on era links
+    document.querySelectorAll('.era-link').forEach(l => l.classList.remove('active'));
+  } else {
+    backLink.classList.add('visible');
+    document.body.style.background = eras[id].bg;
+    // Highlight active era link
+    document.querySelectorAll('.era-link').forEach(l => {
+      l.classList.toggle('active', l.dataset.era === String(id));
+    });
+  }
+}
+
+function showDefault() {
+  showScreen('default');
+}
+
+// Era link clicks
+document.querySelectorAll('.era-link').forEach(link => {
+  link.addEventListener('click', () => {
+    showScreen(parseInt(link.dataset.era));
+  });
+});
+
+function copyEmail() {
+  navigator.clipboard.writeText('ben@genlevel.net').then(() => {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  });
+}
+
+// Keyboard: Escape returns to default
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && currentScreen !== 'default') {
+    showDefault();
+  }
+});
+</script>
+
+</body>
+</html>
