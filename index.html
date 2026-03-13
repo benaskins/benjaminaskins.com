@@ -44,6 +44,8 @@
     transition: background 0.6s;
   }
 
+  .light body { background: #F0EEEB; }
+
   /* ==========================================
      OUTER FRAME
      ========================================== */
@@ -104,38 +106,72 @@
      DEFAULT — CLEAN CARD
      ========================================== */
   .default-card {
-    background: #18181c;
-    border: 1px solid #2a2a30;
+    --dc-bg: #18181c;
+    --dc-border: #2a2a30;
+    --dc-text: #c8c8d0;
+    --dc-name: #f0f0f4;
+    --dc-alias: #7a7a90;
+    --dc-bio: #9898a8;
+    --dc-link: #7a9ec7;
+    --dc-link-hover: #a8c4e0;
+    --dc-muted: #5a5a6a;
+    --dc-project: #8888a0;
+    --dc-era: #5a6a7a;
+    --dc-era-hover: #a0b0c0;
+    --dc-era-active: #c0d0e0;
+    background: var(--dc-bg);
+    border: 1px solid var(--dc-border);
     border-radius: 10px;
     padding: 40px 36px;
     font-family: var(--plex);
-    color: #c8c8d0;
+    color: var(--dc-text);
     line-height: 1.7;
+    transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease;
+  }
+
+  .light .default-card {
+    --dc-bg: #FAF9F7;
+    --dc-border: #E0DDD8;
+    --dc-text: #57534E;
+    --dc-name: #1C1917;
+    --dc-alias: #78716C;
+    --dc-bio: #57534E;
+    --dc-link: #4a7ba8;
+    --dc-link-hover: #2d5a82;
+    --dc-muted: #A8A29E;
+    --dc-project: #78716C;
+    --dc-era: #78716C;
+    --dc-era-hover: #44403C;
+    --dc-era-active: #1C1917;
   }
 
   .default-name {
     font-size: 22px;
     font-weight: 600;
-    color: #f0f0f4;
+    color: var(--dc-name);
     letter-spacing: -0.3px;
+    transition: color 0.6s ease;
   }
 
   .default-alias {
     font-size: 15px;
-    color: #7a7a90;
+    color: var(--dc-alias);
     margin-top: 2px;
+    transition: color 0.6s ease;
   }
 
   .default-divider {
     border: none;
-    border-top: 1px solid #2a2a30;
+    border-top: 1px solid var(--dc-border);
     margin: 20px 0;
+    transition: border-color 0.6s ease;
   }
 
   .default-bio {
     font-size: 14px;
-    color: #9898a8;
+    color: var(--dc-bio);
     line-height: 1.75;
+    transition: color 0.6s ease;
   }
 
   .default-links {
@@ -147,20 +183,20 @@
   }
 
   .default-links a {
-    color: #7a9ec7;
+    color: var(--dc-link);
     text-decoration: none;
     transition: color 0.2s;
   }
 
-  .default-links a:hover { color: #a8c4e0; }
+  .default-links a:hover { color: var(--dc-link-hover); }
 
   .default-links .email-link {
-    color: #7a9ec7;
+    color: var(--dc-link);
     cursor: pointer;
     transition: color 0.2s;
   }
 
-  .default-links .email-link:hover { color: #a8c4e0; }
+  .default-links .email-link:hover { color: var(--dc-link-hover); }
 
   .default-projects {
     margin-top: 24px;
@@ -168,8 +204,9 @@
   }
 
   .default-projects-label {
-    color: #5a5a6a;
+    color: var(--dc-muted);
     margin-bottom: 6px;
+    transition: color 0.6s ease;
   }
 
   .default-projects-list {
@@ -178,24 +215,26 @@
   }
 
   .default-projects-list a {
-    color: #8888a0;
+    color: var(--dc-project);
     text-decoration: none;
     transition: color 0.2s;
   }
 
-  .default-projects-list a:hover { color: #a8c4e0; }
+  .default-projects-list a:hover { color: var(--dc-link-hover); }
 
   .default-hook {
     margin-top: 32px;
     padding-top: 24px;
-    border-top: 1px solid #2a2a30;
+    border-top: 1px solid var(--dc-border);
+    transition: border-color 0.6s ease;
   }
 
   .default-hook-text {
     font-size: 13px;
-    color: #5a5a6a;
+    color: var(--dc-muted);
     font-style: italic;
     margin-bottom: 14px;
+    transition: color 0.6s ease;
   }
 
   .era-links {
@@ -206,15 +245,35 @@
   }
 
   .era-link {
-    color: #5a6a7a;
+    color: var(--dc-era);
     cursor: pointer;
     text-decoration: none;
     transition: color 0.2s;
     white-space: nowrap;
   }
 
-  .era-link:hover { color: #a0b0c0; }
-  .era-link.active { color: #c0d0e0; }
+  .era-link:hover { color: var(--dc-era-hover); }
+  .era-link.active { color: var(--dc-era-active); }
+
+  .theme-toggle {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--dc-muted);
+    transition: color 0.2s;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    z-index: 2;
+  }
+  .theme-toggle:hover { color: var(--dc-name); }
 
   .back-link {
     display: none;
@@ -229,6 +288,8 @@
 
   .back-link:hover { color: rgba(255,255,255,0.45); }
   .back-link.visible { display: block; }
+  .light .back-link { color: rgba(0,0,0,0.2); }
+  .light .back-link:hover { color: rgba(0,0,0,0.45); }
 
   /* ==========================================
      IBM 3270 / MVS TSO
@@ -621,16 +682,16 @@
     bottom: calc(100% + 10px);
     left: 0;
     width: 320px;
-    background: #1e1e24;
-    border: 1px solid #3a3a44;
+    background: var(--dc-bg, #1e1e24);
+    border: 1px solid var(--dc-border, #3a3a44);
     border-radius: 6px;
     padding: 14px 16px;
     font-size: 12px;
     line-height: 1.65;
-    color: #9898a8;
+    color: var(--dc-bio, #9898a8);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease, background 0.6s ease;
     transform: translateY(4px);
     z-index: 100;
   }
@@ -641,7 +702,7 @@
     top: 100%;
     left: 24px;
     border: 6px solid transparent;
-    border-top-color: #3a3a44;
+    border-top-color: var(--dc-border, #3a3a44);
   }
 
   .alias-wrapper:hover .alias-tooltip {
@@ -677,7 +738,9 @@
     color: rgba(255,255,255,0.12);
     text-align: center;
     margin-top: 24px;
+    transition: color 0.6s ease;
   }
+  .light .copyright { color: rgba(0,0,0,0.15); }
 
   /* Toast */
   .toast {
@@ -722,7 +785,8 @@
 
     <!-- ====== DEFAULT CLEAN CARD ====== -->
     <div class="terminal-screen active" id="screen-default">
-      <div class="default-card">
+      <div class="default-card" style="position:relative;">
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark">☀</button>
         <div class="default-name">Benjamin Askins</div>
         <div class="default-alias">
           <span class="alias-wrapper">genlevel <span class="tooltip-pronunciation">/ˈdʒɛn.lɛv.əl/</span>
@@ -1181,7 +1245,7 @@ function showScreen(id) {
   const backLink = document.getElementById('backLink');
   if (id === 'default') {
     backLink.classList.remove('visible');
-    document.body.style.background = '#111114';
+    document.body.style.background = document.documentElement.classList.contains('light') ? '#F0EEEB' : '#111114';
     // Clear active state on era links
     document.querySelectorAll('.era-link').forEach(l => l.classList.remove('active'));
   } else {
@@ -1213,6 +1277,14 @@ function copyEmail() {
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2000);
   });
+}
+
+function toggleTheme() {
+  document.documentElement.classList.toggle('light');
+  if (currentScreen === 'default') {
+    const isLight = document.documentElement.classList.contains('light');
+    document.body.style.background = isLight ? '#F0EEEB' : '#111114';
+  }
 }
 
 // Keyboard: Escape returns to default
