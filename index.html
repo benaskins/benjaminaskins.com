@@ -786,7 +786,14 @@
     <!-- ====== DEFAULT CLEAN CARD ====== -->
     <div class="terminal-screen active" id="screen-default">
       <div class="default-card" style="position:relative;">
-        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark">☀</button>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark">
+          <svg width="20" height="20" viewBox="0 0 20 20">
+            <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1"/>
+            <path d="M 10 2 A 8 8 0 0 1 10 18" fill="currentColor"/>
+            <circle cx="10" cy="2" r="1.2" fill="currentColor"/>
+            <circle cx="10" cy="18" r="1.2" fill="currentColor"/>
+          </svg>
+        </button>
         <div class="default-name">Benjamin Askins</div>
         <div class="default-alias">
           <span class="alias-wrapper">genlevel <span class="tooltip-pronunciation">/ˈdʒɛn.lɛv.əl/</span>
