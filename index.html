@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <title>Benjamin Askins</title>
 <meta name="description" content="Software engineer, 36 years. Electronic music producer since 1991. genlevel.">
@@ -1318,7 +1318,7 @@ document.addEventListener('keydown', (e) => {
     align-items: center;
     justify-content: center;
     gap: 16px;
-    padding: 8px 0;
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
     font-family: var(--plex, 'IBM Plex Mono', monospace);
     font-size: 11px;
     letter-spacing: 0.06em;
