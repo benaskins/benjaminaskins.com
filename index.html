@@ -133,8 +133,10 @@
 
   <div class="footer">
     <div class="footer-left">&copy; 2026 Benjamin Askins</div>
-    <a href="#" onclick="openTerminalOverlay(); return false;">Terminal Card &rarr;</a>
   </div>
+
+  <button class="fixed-control fixed-control-left" id="themeToggle">dark</button>
+  <a class="fixed-control fixed-control-right" href="#" onclick="openTerminalOverlay(); return false;">terminal card &rarr;</a>
 
   <!-- Terminal overlay — 7 retro terminal emulations -->
   <div class="terminal-overlay" id="terminalOverlay">
@@ -349,5 +351,23 @@
   </div>
 
   <script src="/terminal-overlay.js?v=5dc245de"></script>
+  <script>
+  (function() {
+    var stored = localStorage.getItem('theme');
+    var system = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    var theme = stored || system;
+    document.documentElement.setAttribute('data-theme', theme);
+    var btn = document.getElementById('themeToggle');
+    if (btn) {
+      btn.textContent = theme;
+      btn.addEventListener('click', function() {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        btn.textContent = next;
+      });
+    }
+  })();
+  </script>
 </body>
 </html>

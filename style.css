@@ -10,6 +10,33 @@
   --panel-border: rgba(255, 255, 255, 0.08);
 }
 
+[data-theme="light"],
+:root:not([data-theme="dark"]) {
+  --bg: #f0ebe4;
+  --fg: #1a1410;
+  --dim: #a08a78;
+  --muted: #5c4d42;
+  --accent: #c04020;
+  --accent-dim: #d4704a;
+  --ghost: rgba(192, 72, 32, 0.04);
+  --panel-bg: rgba(192, 72, 32, 0.04);
+  --panel-border: rgba(160, 138, 120, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c0c0c;
+    --fg: #e8e8e8;
+    --dim: #444;
+    --muted: #777;
+    --accent: #e04020;
+    --accent-dim: #802010;
+    --ghost: rgba(255, 255, 255, 0.02);
+    --panel-bg: rgba(255, 255, 255, 0.03);
+    --panel-border: rgba(255, 255, 255, 0.08);
+  }
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
@@ -19,6 +46,7 @@ body {
   color: var(--fg);
   min-height: 100vh;
   overflow-x: hidden;
+  padding-bottom: 48px;
 }
 
 /* --- Hero / Identity --- */
@@ -185,7 +213,7 @@ body {
   font-family: 'Archivo Black', sans-serif;
   font-size: 4rem;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.03);
+  color: var(--ghost);
   position: absolute;
   top: -0.1rem;
   right: 0.5rem;
@@ -291,6 +319,41 @@ body {
 .corner-mark.tl { top: 0.75rem; left: 0.75rem; }
 .corner-mark.tr { top: 0.75rem; right: 0.75rem; }
 .corner-mark.br { bottom: 0.75rem; right: 0.75rem; }
+
+/* --- Theme toggle --- */
+
+/* --- Fixed controls --- */
+
+.fixed-control {
+  position: fixed;
+  bottom: 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  color: var(--dim);
+  background: none;
+  border: 1px solid var(--dim);
+  cursor: pointer;
+  padding: 4px 10px;
+  text-decoration: none;
+  z-index: 999;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.fixed-control:hover {
+  color: var(--fg);
+  border-color: var(--fg);
+}
+
+.fixed-control-left { left: 12px; }
+.fixed-control-right { right: 12px; }
+
+/* --- Smooth transitions --- */
+
+body {
+  transition: background 0.4s ease, color 0.4s ease;
+}
 
 /* --- Mobile --- */
 
