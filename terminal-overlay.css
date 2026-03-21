@@ -1,0 +1,297 @@
+/* Terminal Overlay — retro terminal card carousel */
+
+:root {
+  --vt: 'VT323', monospace;
+  --plex: 'IBM Plex Mono', monospace;
+  --courier: 'Courier Prime', 'Courier New', monospace;
+}
+
+.terminal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.terminal-overlay.open {
+  display: flex;
+}
+
+.terminal-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+}
+
+.terminal-overlay-content {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  padding: 20px;
+}
+
+.terminal-overlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.terminal-era-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.terminal-close {
+  background: none;
+  border: 1px solid var(--dim);
+  color: var(--muted);
+  font-size: 18px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.terminal-close:hover {
+  color: var(--fg);
+  border-color: var(--fg);
+}
+
+.terminal-screens {
+  position: relative;
+  min-height: 400px;
+}
+
+.t-screen {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.t-screen.active {
+  opacity: 1;
+  position: relative;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.terminal-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.terminal-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dim);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.terminal-dot.active {
+  background: var(--accent);
+}
+
+.terminal-dot:hover {
+  background: var(--muted);
+}
+
+.terminal-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.terminal-btn {
+  background: none;
+  border: 1px solid var(--dim);
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.terminal-btn:hover {
+  color: var(--fg);
+  border-color: var(--fg);
+}
+
+/* --- CRT effects --- */
+
+.crt-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.crt-overlay.scanlines::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.18) 2px, rgba(0,0,0,0.18) 4px
+  );
+}
+
+.crt-overlay.vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,0.35) 100%);
+}
+
+/* --- IBM 3270 --- */
+
+.mvs-screen {
+  background: #001a00;
+  font-family: var(--vt);
+  color: #33ff33;
+  padding: 0;
+  border: 3px solid #1a3a1a;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(51,255,51,0.06), inset 0 0 80px rgba(0,0,0,0.4);
+  position: relative;
+}
+.mvs-body { padding: 16px 20px; min-height: 360px; display: flex; flex-direction: column; text-shadow: 0 0 6px rgba(51,255,51,0.25); font-size: 18px; line-height: 1.45; }
+.mvs-field-bright { color: #7fff7f; }
+.mvs-field-white { color: #ffffff; text-shadow: 0 0 8px rgba(255,255,255,0.2); }
+.mvs-field-red { color: #ff4444; }
+.mvs-field-yellow { color: #ffff33; }
+.mvs-field-turq { color: #33ffff; }
+.mvs-field-dim { color: rgba(51,255,51,0.35); }
+.mvs-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.mvs-ruler { color: rgba(51,255,51,0.15); margin: 8px 0; overflow: hidden; white-space: nowrap; }
+.mvs-row { display: flex; gap: 0; }
+.mvs-label { color: #33ffff; min-width: 140px; flex-shrink: 0; }
+.mvs-value { color: #7fff7f; }
+.mvs-spacer { flex: 1; }
+.mvs-status-bar { background: #004400; color: #33ff33; font-family: var(--vt); font-size: 16px; padding: 6px 20px; display: flex; justify-content: space-between; border-top: 1px solid rgba(51,255,51,0.15); }
+.mvs-pfkeys { background: #002200; color: rgba(51,255,51,0.4); font-family: var(--vt); font-size: 14px; padding: 6px 20px; border-top: 1px solid rgba(51,255,51,0.08); }
+
+/* --- VMS --- */
+
+.vms-screen { background: #1a0a2e; font-family: var(--vt); color: #ffb347; padding: 0; border: 3px solid #2a1540; border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(255,179,71,0.04), inset 0 0 80px rgba(0,0,0,0.4); position: relative; }
+.vms-body { padding: 20px 24px; min-height: 360px; text-shadow: 0 0 5px rgba(255,179,71,0.18); font-size: 18px; line-height: 1.5; }
+.vms-prompt { color: #ffb347; }
+.vms-bright { color: #ffd085; }
+.vms-green { color: #33ff77; text-shadow: 0 0 8px rgba(51,255,119,0.25); }
+.vms-dim { color: rgba(255,179,71,0.35); }
+
+/* --- UNIX xterm --- */
+
+.unix-screen { background: #000000; font-family: var(--plex); color: #00cc00; padding: 0; border: 3px solid #1a1a1a; border-radius: 8px; overflow: hidden; position: relative; }
+.unix-titlebar { background: #2a2a2a; padding: 4px 12px; font-size: 12px; color: #888; text-align: center; border-bottom: 1px solid #333; font-family: var(--plex); }
+.unix-body { padding: 16px 20px; min-height: 340px; font-size: 14px; line-height: 1.65; text-shadow: 0 0 3px rgba(0,204,0,0.15); }
+.unix-user { color: #00ff41; font-weight: 600; }
+.unix-host { color: #00ff41; }
+.unix-path { color: #5555ff; font-weight: 600; }
+.unix-cmd { color: #cccccc; }
+.unix-output { color: #00cc00; }
+.unix-highlight { color: #ffffff; }
+.unix-link-color { color: #5599ff; }
+.unix-exec { color: #00ff41; }
+.unix-dim { color: #336633; }
+.unix-ls-entry { display: grid; grid-template-columns: 90px 60px 1fr; gap: 4px; }
+.unix-perms { color: #888; }
+
+/* --- CDE --- */
+
+.cde-screen { background: #5f7080; padding: 4px; border: none; border-radius: 0; }
+.cde-window { background: #aeb2c3; border: 2px outset #d0d4e0; }
+.cde-titlebar { background: linear-gradient(180deg, #506070 0%, #3a4a5a 100%); padding: 3px 4px; display: flex; align-items: center; gap: 4px; }
+.cde-btn { width: 18px; height: 18px; background: #8a9db0; border: 2px outset #b0c0d0; flex-shrink: 0; }
+.cde-title-text { flex: 1; text-align: center; font-family: var(--plex); font-size: 12px; font-weight: 600; color: #e0e4f0; letter-spacing: 0.5px; }
+.cde-menubar { background: #aeb2c3; border-bottom: 2px groove #d0d4e0; padding: 2px 8px; display: flex; gap: 0; }
+.cde-menu-item { font-family: var(--plex); font-size: 12px; color: #1a1a2e; padding: 2px 10px; }
+.cde-terminal { background: #1e2030; border: 2px inset #8090a0; margin: 4px; padding: 14px 16px; min-height: 320px; font-family: var(--courier); font-size: 14px; line-height: 1.6; color: #d4cfc4; }
+.cde-prompt { color: #8cc8ff; }
+.cde-output { color: #d4cfc4; }
+.cde-bright { color: #ffffff; }
+.cde-accent { color: #8cc8ff; }
+.cde-dim { color: rgba(212,207,196,0.35); }
+
+/* --- Windows NT --- */
+
+.nt-screen { background: #c0c0c0; padding: 3px; border: 2px outset #dfdfdf; border-radius: 0; }
+.nt-titlebar { background: linear-gradient(90deg, #000080, #1084d0); padding: 2px 3px; display: flex; align-items: center; gap: 2px; }
+.nt-icon { width: 16px; height: 16px; background: #000; border: 1px solid #808080; margin-right: 4px; font-size: 10px; display: flex; align-items: center; justify-content: center; color: #c0c0c0; font-family: var(--plex); }
+.nt-title-text { flex: 1; font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 11px; font-weight: 700; color: #ffffff; }
+.nt-btn { width: 16px; height: 14px; background: #c0c0c0; border: 2px outset #dfdfdf; font-size: 8px; font-family: 'Segoe UI', sans-serif; font-weight: 900; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #000; }
+.nt-terminal { background: #0c0c0c; padding: 12px 16px; min-height: 340px; font-family: var(--courier); font-size: 14px; line-height: 1.55; color: #c0c0c0; }
+.nt-white { color: #ffffff; }
+.nt-yellow { color: #ffff54; }
+.nt-green { color: #54ff54; }
+.nt-cyan { color: #54ffff; }
+.nt-dim { color: #606060; }
+
+/* --- macOS --- */
+
+.mac-screen { background: transparent; border: none; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08); }
+.mac-titlebar { background: #2d2d2d; padding: 10px 14px; display: flex; align-items: center; gap: 8px; }
+.mac-dots { display: flex; gap: 7px; }
+.mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+.mac-dot.red { background: #ff5f57; }
+.mac-dot.yellow { background: #ffbd2e; }
+.mac-dot.green { background: #28ca41; }
+.mac-title-text { flex: 1; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; font-size: 13px; color: #999; }
+.mac-terminal { background: rgba(30, 30, 36, 0.97); padding: 16px 20px; min-height: 340px; font-family: 'Menlo', var(--plex); font-size: 13px; line-height: 1.7; color: #cccccc; }
+.mac-prompt { color: #5af78e; }
+.mac-path { color: #57c7ff; }
+.mac-cmd { color: #f1f1f0; }
+.mac-output { color: #cccccc; }
+.mac-highlight { color: #f1f1f0; }
+.mac-blue { color: #57c7ff; }
+.mac-dim { color: #555566; }
+
+/* --- Claude Code --- */
+
+.claude-screen { background: #120e22; border: 1px solid #2a2245; border-radius: 10px; overflow: hidden; box-shadow: 0 0 80px rgba(200,120,255,0.03), 0 10px 40px rgba(0,0,0,0.4); }
+.claude-body { padding: 20px 24px; min-height: 360px; font-family: var(--plex); font-size: 13px; line-height: 1.7; color: #d4c5f0; }
+.claude-orange { color: #e8935a; }
+.claude-text { color: #d4c5f0; }
+.claude-bright { color: #f0e4ff; }
+.claude-dim { color: rgba(212,197,240,0.3); }
+.claude-blue { color: #7aa2f7; }
+
+/* --- Links in terminals --- */
+
+a.screen-link { color: inherit; text-decoration: none; cursor: pointer; transition: opacity 0.2s; }
+a.screen-link:hover { opacity: 0.7; }
+
+/* --- Mobile --- */
+
+@media (max-width: 520px) {
+  .terminal-overlay-content { padding: 12px; }
+  .mvs-body, .vms-body { font-size: 15px; padding: 12px 14px; }
+  .unix-body, .cde-terminal, .nt-terminal { font-size: 12px; padding: 12px 14px; }
+  .mac-terminal { font-size: 12px; }
+  .claude-body { font-size: 12px; }
+  .mvs-label { min-width: 100px; }
+  .unix-ls-entry { grid-template-columns: 80px 40px 1fr; }
+}

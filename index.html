@@ -23,325 +23,9 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0c0c0c;
-      --fg: #e8e8e8;
-      --dim: #444;
-      --muted: #777;
-      --cyan: #00e5ff;
-      --magenta: #ff0090;
-      --yellow: #e5ff00;
-      --panel-bg: rgba(255, 255, 255, 0.03);
-      --panel-border: rgba(255, 255, 255, 0.08);
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      font-weight: 300;
-      background: var(--bg);
-      color: var(--fg);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* --- Hero / Identity --- */
-
-    .hero {
-      position: relative;
-      padding: 3rem 2.5rem 2.5rem;
-      border-bottom: 1px solid var(--dim);
-      overflow: hidden;
-    }
-
-    .hero-bg-text {
-      position: absolute;
-      top: -0.15em;
-      right: -0.02em;
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 18vw;
-      line-height: 0.85;
-      color: rgba(255, 255, 255, 0.02);
-      text-transform: uppercase;
-      pointer-events: none;
-      white-space: nowrap;
-      letter-spacing: -0.04em;
-    }
-
-    .hero-label {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--dim);
-      transform: rotate(-90deg);
-      transform-origin: left top;
-      position: absolute;
-      left: 0.5rem;
-      top: 3rem;
-      white-space: nowrap;
-    }
-
-    .hero-name {
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 5rem;
-      line-height: 0.88;
-      text-transform: uppercase;
-      letter-spacing: -0.03em;
-      position: relative;
-      z-index: 1;
-      margin-left: 2rem;
-    }
-
-    .hero-name .highlight {
-      color: var(--cyan);
-    }
-
-    .hero-stripe {
-      height: 3px;
-      background: linear-gradient(90deg, var(--cyan) 0%, var(--magenta) 50%, var(--yellow) 100%);
-      margin: 1.25rem 0 1rem 2rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-info {
-      display: flex;
-      gap: 3rem;
-      margin-left: 2rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-info-block {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.08em;
-      line-height: 1.9;
-      color: var(--muted);
-    }
-
-    .hero-info-block .label {
-      color: var(--dim);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      font-size: 0.55rem;
-    }
-
-    .hero-info-block a {
-      color: var(--cyan);
-      text-decoration: none;
-    }
-
-    .hero-info-block a:hover {
-      text-decoration: underline;
-    }
-
-    .hero-tags {
-      display: flex;
-      gap: 0.5rem;
-      margin-left: 2rem;
-      margin-top: 1rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tag {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.3rem 0.6rem;
-      border: 1px solid var(--dim);
-      color: var(--muted);
-    }
-
-    /* --- Projects --- */
-
-    .projects {
-      padding: 0 2.5rem 2rem;
-      position: relative;
-    }
-
-    .projects-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 1.5rem 0 1rem;
-    }
-
-    .projects-title {
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-    }
-
-    .projects-count {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.55rem;
-      color: var(--dim);
-      letter-spacing: 0.15em;
-    }
-
-    .project-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 0;
-    }
-
-    .project {
-      border: 1px solid var(--panel-border);
-      padding: 1.75rem;
-      position: relative;
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      transition: background 0.2s;
-      overflow: hidden;
-    }
-
-    .project:hover {
-      background: var(--panel-bg);
-    }
-
-    .project-number {
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 4rem;
-      line-height: 1;
-      color: rgba(255, 255, 255, 0.03);
-      position: absolute;
-      top: -0.1rem;
-      right: 0.5rem;
-    }
-
-    .project-category {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.5rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
-    }
-
-    .cat-writing { color: var(--cyan); }
-    .cat-philosophy { color: var(--magenta); }
-    .cat-music { color: var(--yellow); }
-
-    .project-title {
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 1.3rem;
-      text-transform: uppercase;
-      letter-spacing: -0.01em;
-      line-height: 1.1;
-      margin-bottom: 0.35rem;
-    }
-
-    .project:hover .project-title {
-      color: var(--cyan);
-    }
-
-    .project-url {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--dim);
-      letter-spacing: 0.04em;
-      margin-bottom: 0.75rem;
-    }
-
-    .project-desc {
-      font-size: 0.8rem;
-      line-height: 1.5;
-      color: var(--muted);
-    }
-
-    .project-line {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 2px;
-      width: 0;
-      transition: width 0.3s ease;
-    }
-
-    .project:hover .project-line {
-      width: 100%;
-    }
-
-    .line-cyan { background: var(--cyan); }
-    .line-magenta { background: var(--magenta); }
-    .line-yellow { background: var(--yellow); }
-
-    /* --- Footer --- */
-
-    .footer {
-      padding: 1rem 2.5rem;
-      border-top: 1px solid var(--panel-border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .footer-left {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.5rem;
-      letter-spacing: 0.15em;
-      color: var(--dim);
-      text-transform: uppercase;
-    }
-
-    .footer a {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      text-decoration: none;
-      text-transform: uppercase;
-      border: 1px solid var(--dim);
-      padding: 0.4rem 0.8rem;
-      transition: all 0.2s;
-    }
-
-    .footer a:hover {
-      color: var(--fg);
-      border-color: var(--fg);
-    }
-
-    /* --- Decorative --- */
-
-    .corner-mark {
-      position: fixed;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.5rem;
-      letter-spacing: 0.2em;
-      color: var(--dim);
-      text-transform: uppercase;
-      z-index: 10;
-    }
-
-    .corner-mark.tl { top: 0.75rem; left: 0.75rem; }
-    .corner-mark.tr { top: 0.75rem; right: 0.75rem; }
-    .corner-mark.br { bottom: 0.75rem; right: 0.75rem; }
-
-    /* --- Mobile --- */
-
-    @media (max-width: 768px) {
-      .hero { padding: 2rem 1.25rem 2rem; }
-      .hero-name { font-size: 2.8rem; margin-left: 0; }
-      .hero-bg-text { font-size: 30vw; }
-      .hero-label { display: none; }
-      .hero-stripe { margin-left: 0; }
-      .hero-info { margin-left: 0; flex-direction: column; gap: 1rem; }
-      .hero-tags { margin-left: 0; flex-wrap: wrap; }
-      .projects { padding: 0 1.25rem 2rem; }
-      .project-grid { grid-template-columns: 1fr; }
-      .project-number { font-size: 3rem; }
-      .footer { padding: 1rem 1.25rem; }
-      .corner-mark { display: none; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=VT323&family=IBM+Plex+Mono:wght@300;400;500;600&family=Courier+Prime&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css?v=5dc245de">
+  <link rel="stylesheet" href="/terminal-overlay.css?v=5dc245de">
 </head>
 <body>
 
@@ -370,7 +54,7 @@
       <div class="hero-info-block">
         <div class="label">Contact</div>
         <a href="https://github.com/benaskins">github.com/benaskins</a><br>
-        ben@genlevel.net
+        human@getlamina.ai
       </div>
     </div>
     <div class="hero-tags">
@@ -384,54 +68,63 @@
   <div class="projects">
     <div class="projects-header">
       <div class="projects-title">Projects</div>
-      <div class="projects-count">05 Items</div>
+      <div class="projects-count">06 Items</div>
     </div>
 
     <div class="project-grid">
 
-      <a class="project" href="https://generativeplane.com">
+      <a class="project" href="https://getlamina.ai">
         <div class="project-number">01</div>
-        <div class="project-category cat-writing">Writing</div>
+        <div class="project-category">Infrastructure</div>
+        <div class="project-title">Lamina</div>
+        <div class="project-url">getlamina.ai</div>
+        <div class="project-desc">Personal compute cluster. Go modules for AI-powered services, process supervision, and sovereign infrastructure.</div>
+        <div class="project-line"></div>
+      </a>
+
+      <a class="project" href="https://generativeplane.com">
+        <div class="project-number">02</div>
+        <div class="project-category">Writing</div>
         <div class="project-title">Generative Plane</div>
         <div class="project-url">generativeplane.com</div>
         <div class="project-desc">Long-form writing on software, infrastructure, and the things between.</div>
-        <div class="project-line line-cyan"></div>
+        <div class="project-line"></div>
       </a>
 
       <a class="project" href="https://abhidharma.pl">
-        <div class="project-number">02</div>
-        <div class="project-category cat-philosophy">Philosophy</div>
+        <div class="project-number">03</div>
+        <div class="project-category">Philosophy</div>
         <div class="project-title">Abhidharma.pl</div>
         <div class="project-url">abhidharma.pl</div>
         <div class="project-desc">Interactive Prolog model of Buddhist epistemology. Dharmakirti's logic and Abhidharma classification, queryable in the browser.</div>
-        <div class="project-line line-magenta"></div>
+        <div class="project-line"></div>
       </a>
 
       <a class="project" href="https://isitconscious.xyz">
-        <div class="project-number">03</div>
-        <div class="project-category cat-philosophy">Philosophy</div>
+        <div class="project-number">04</div>
+        <div class="project-category">Philosophy</div>
         <div class="project-title">Is It Conscious?</div>
         <div class="project-url">isitconscious.xyz</div>
         <div class="project-desc">A diagnostic from the Buddhist philosophical tradition. Five questions about the capacities of mind.</div>
-        <div class="project-line line-magenta"></div>
+        <div class="project-line"></div>
       </a>
 
       <a class="project" href="https://genlevel.com">
-        <div class="project-number">04</div>
-        <div class="project-category cat-music">Music</div>
+        <div class="project-number">05</div>
+        <div class="project-category">Music</div>
         <div class="project-title">Genlevel</div>
         <div class="project-url">genlevel.com</div>
         <div class="project-desc">Electronic music since the mid-90s. Ambient, techno, experimental.</div>
-        <div class="project-line line-yellow"></div>
+        <div class="project-line"></div>
       </a>
 
       <a class="project" href="https://sailorgrift.com">
-        <div class="project-number">05</div>
-        <div class="project-category cat-music">Music</div>
+        <div class="project-number">06</div>
+        <div class="project-category">Music</div>
         <div class="project-title">Sailor Grift</div>
         <div class="project-url">sailorgrift.com</div>
         <div class="project-desc">Musical side project. Coming soon.</div>
-        <div class="project-line line-yellow"></div>
+        <div class="project-line"></div>
       </a>
 
     </div>
@@ -439,8 +132,221 @@
 
   <div class="footer">
     <div class="footer-left">&copy; 2026 Benjamin Askins</div>
-    <a href="/card.html">Terminal Card &rarr;</a>
+    <a href="#" onclick="openTerminalOverlay(); return false;">Terminal Card &rarr;</a>
   </div>
 
+  <!-- Terminal overlay — 7 retro terminal emulations -->
+  <div class="terminal-overlay" id="terminalOverlay">
+    <div class="terminal-overlay-backdrop" onclick="closeTerminalOverlay()"></div>
+    <div class="terminal-overlay-content">
+      <div class="terminal-overlay-header">
+        <div class="terminal-era-name" id="eraName">IBM 3270</div>
+        <button class="terminal-close" onclick="closeTerminalOverlay()">&times;</button>
+      </div>
+      <div class="terminal-screens">
+
+        <!-- IBM 3270 / MVS TSO -->
+        <div class="t-screen active" data-era="0">
+          <div class="mvs-screen">
+            <div class="mvs-body">
+              <div class="mvs-header">
+                <span class="mvs-field-turq">ISPF/PDF 3.4</span>
+                <span class="mvs-field-turq">PERSONAL DATA SET LIST</span>
+                <span class="mvs-field-dim">ROW 1 OF 12</span>
+              </div>
+              <div class="mvs-ruler">&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;</div>
+              <div style="margin: 8px 0;">
+                <span class="mvs-field-turq">DSNAME LEVEL ===> </span>
+                <span class="mvs-field-white">BASKINS.IDENTITY.*</span>
+              </div>
+              <div class="mvs-ruler">&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;</div>
+              <div style="margin: 10px 0 6px;">
+                <div class="mvs-row"><span class="mvs-label">NAME</span><span class="mvs-field-white">BENJAMIN ASKINS</span></div>
+                <div class="mvs-row"><span class="mvs-label">ALIAS</span><span class="mvs-field-yellow">GENLEVEL</span></div>
+              </div>
+              <div class="mvs-ruler">&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;</div>
+              <div style="margin: 8px 0;">
+                <div class="mvs-row"><span class="mvs-label">ROLE</span><span class="mvs-value">SOFTWARE ENGINEER</span></div>
+                <div class="mvs-row"><span class="mvs-label">EXPERIENCE</span><span class="mvs-value">36 YEARS</span></div>
+                <div class="mvs-row"><span class="mvs-label">FOCUS</span><span class="mvs-value">INFRASTRUCTURE, DISTRIBUTED SYSTEMS,</span></div>
+                <div class="mvs-row"><span class="mvs-label"></span><span class="mvs-value">DEVELOPER EXPERIENCE, PLATFORM ENGINEERING</span></div>
+                <div class="mvs-row"><span class="mvs-label">LOCATION</span><span class="mvs-value">CENTRAL COAST, NSW</span></div>
+              </div>
+              <div class="mvs-spacer"></div>
+              <div style="margin-top: 8px;">
+                <span class="mvs-field-dim">LINKS: </span>
+                <a href="https://github.com/benaskins" class="screen-link mvs-field-turq" target="_blank">GITHUB.COM/BENASKINS</a>
+              </div>
+            </div>
+            <div class="mvs-status-bar">
+              <span>COMMAND ===> _</span>
+              <span>SCROLL ===> PAGE</span>
+            </div>
+            <div class="mvs-pfkeys">PF1=HELP  PF3=EXIT  PF7=UP  PF8=DOWN</div>
+            <div class="crt-overlay scanlines vignette"></div>
+          </div>
+        </div>
+
+        <!-- VMS / DCL -->
+        <div class="t-screen" data-era="1">
+          <div class="vms-screen">
+            <div class="vms-body">
+              <div><span class="vms-dim">%SET-I-INTSET, login procedure complete</span></div>
+              <div style="margin-top: 4px;"><span class="vms-dim">GENLEVEL::BASKINS &mdash; OpenVMS V7.3-2 on node GENLVL</span></div>
+              <br>
+              <div><span class="vms-prompt">$ </span><span class="vms-bright">SHOW PERSONAL /FULL</span></div>
+              <br>
+              <div><span class="vms-green">Personal Information Display</span></div>
+              <br>
+              <div><span>&nbsp; Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="vms-bright">Benjamin Askins</span></div>
+              <div><span>&nbsp; Alias:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="vms-green">genlevel</span></div>
+              <div><span>&nbsp; Role:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>Software Engineer, 36 years</span></div>
+              <div><span>&nbsp; Focus:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>Infrastructure, Distributed Systems</span></div>
+              <div><span>&nbsp; Location:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>Central Coast, NSW</span></div>
+              <br>
+              <div><span class="vms-prompt">$ </span><span class="vms-dim">&#9608;</span></div>
+            </div>
+            <div class="crt-overlay scanlines vignette"></div>
+          </div>
+        </div>
+
+        <!-- UNIX xterm -->
+        <div class="t-screen" data-era="2">
+          <div class="unix-screen">
+            <div class="unix-titlebar">xterm &mdash; ben@genlevel</div>
+            <div class="unix-body">
+<span class="unix-dim"># ~/.identity</span><br><br>
+<span class="unix-user">ben</span><span class="unix-dim">@</span><span class="unix-host">genlevel</span><span class="unix-dim">:</span><span class="unix-path">~</span><span class="unix-dim">$ </span><span class="unix-cmd">cat /etc/motd</span><br><br>
+<span class="unix-highlight">Benjamin Askins</span> &middot; <span class="unix-exec">genlevel</span><br>
+<span class="unix-output">Software engineer, 36 years. Infrastructure,</span><br>
+<span class="unix-output">distributed systems. Central Coast, NSW.</span><br><br>
+<span class="unix-user">ben</span><span class="unix-dim">@</span><span class="unix-host">genlevel</span><span class="unix-dim">:</span><span class="unix-path">~</span><span class="unix-dim">$ </span><span class="unix-cmd">ls -la ~/links/</span><br><br>
+<span class="unix-dim">total 2</span><br>
+<div class="unix-ls-entry">
+  <span class="unix-perms">lrwxrwxrwx</span>
+  <span class="unix-dim">ben</span>
+  <a href="https://github.com/benaskins" class="screen-link unix-link-color" target="_blank">github -> github.com/benaskins</a>
+</div>
+<br>
+<span class="unix-user">ben</span><span class="unix-dim">@</span><span class="unix-host">genlevel</span><span class="unix-dim">:</span><span class="unix-path">~</span><span class="unix-dim">$ </span><span class="unix-dim">&#9608;</span>
+            </div>
+            <div class="crt-overlay scanlines vignette"></div>
+          </div>
+        </div>
+
+        <!-- CDE / Motif -->
+        <div class="t-screen" data-era="3">
+          <div class="cde-screen">
+            <div class="cde-window">
+              <div class="cde-titlebar">
+                <div class="cde-btn"></div>
+                <div class="cde-title-text">dtterm &mdash; genlevel</div>
+                <div class="cde-btn"></div>
+                <div class="cde-btn"></div>
+              </div>
+              <div class="cde-menubar">
+                <span class="cde-menu-item">Window</span>
+                <span class="cde-menu-item">Edit</span>
+                <span class="cde-menu-item">Options</span>
+              </div>
+              <div class="cde-terminal">
+<span class="cde-dim">Solaris 2.6 &mdash; Common Desktop Environment</span><br><br>
+<span class="cde-prompt">genlevel% </span><span class="cde-bright">finger baskins</span><br><br>
+<span class="cde-accent">Login: baskins</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cde-accent">Name: Benjamin Askins</span><br>
+<span class="cde-output">Directory: /export/home/baskins&nbsp;&nbsp;&nbsp;&nbsp; Shell: /bin/tcsh</span><br><br>
+<span class="cde-output">Plan:</span><br>
+<span class="cde-bright">Software engineer</span><span class="cde-output">, 36 years. Infrastructure,</span><br>
+<span class="cde-output">distributed systems. Central Coast, NSW.</span><br><br>
+<span class="cde-prompt">genlevel% </span><span class="cde-dim">&#9608;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Windows NT -->
+        <div class="t-screen" data-era="4">
+          <div class="nt-screen">
+            <div class="nt-titlebar">
+              <div class="nt-icon">C:\</div>
+              <div class="nt-title-text">Command Prompt</div>
+              <div style="display:flex; gap:2px;">
+                <div class="nt-btn">_</div>
+                <div class="nt-btn">&#9633;</div>
+                <div class="nt-btn">&times;</div>
+              </div>
+            </div>
+            <div class="nt-terminal">
+<span class="nt-dim">Microsoft(R) Windows NT(TM)</span><br>
+<span class="nt-dim">(C) Copyright 1985-1996 Microsoft Corp.</span><br><br>
+<span>C:\WINNT\Profiles\baskins&gt; </span><span class="nt-white">type identity.txt</span><br><br>
+<span class="nt-yellow">Benjamin Askins</span><br>
+<span class="nt-green">genlevel</span><br><br>
+<span>Software engineer, 36 years. Infrastructure,</span><br>
+<span>distributed systems. Central Coast, NSW.</span><br><br>
+<span>C:\WINNT\Profiles\baskins&gt; </span><span class="nt-dim">_</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- macOS Terminal -->
+        <div class="t-screen" data-era="5">
+          <div class="mac-screen">
+            <div class="mac-titlebar">
+              <div class="mac-dots">
+                <div class="mac-dot red"></div>
+                <div class="mac-dot yellow"></div>
+                <div class="mac-dot green"></div>
+              </div>
+              <div class="mac-title-text">ben &mdash; ~</div>
+              <div style="width: 52px;"></div>
+            </div>
+            <div class="mac-terminal">
+<span class="mac-dim">Last login: Sat Mar 21 12:00:00 on ttys001</span><br>
+<span class="mac-prompt">&#10095; </span><span class="mac-cmd">cat ~/.identity</span><br><br>
+<span class="mac-highlight">&nbsp;&nbsp;Benjamin Askins</span><br>
+<span class="mac-blue">&nbsp;&nbsp;genlevel</span><br>
+<span class="mac-dim">&nbsp;&nbsp;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;</span><br>
+<span class="mac-dim">&nbsp;&nbsp;Role:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-output">Software Engineer</span><br>
+<span class="mac-dim">&nbsp;&nbsp;Experience:&nbsp; </span><span class="mac-output">36 years</span><br>
+<span class="mac-dim">&nbsp;&nbsp;Focus:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="mac-output">Infrastructure &middot; Distributed Systems</span><br>
+<span class="mac-dim">&nbsp;&nbsp;Location:&nbsp;&nbsp;&nbsp; </span><span class="mac-output">Central Coast, NSW</span><br><br>
+<span class="mac-prompt">&#10095; </span><span class="mac-dim">&#9608;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Claude Code -->
+        <div class="t-screen" data-era="6">
+          <div class="claude-screen">
+            <div class="claude-body">
+<span class="claude-orange">Claude Code</span><span class="claude-dim"> v1.0.33</span><br>
+<span class="claude-text">/Users/ben/dev/sites/benjaminaskins.com</span><br>
+<span class="claude-dim">Model: claude-opus-4-6</span><br><br>
+<span class="claude-dim">&gt;</span> <span class="claude-bright">who am I?</span><br><br>
+<span class="claude-text">Let me check.</span><br><br>
+<span class="claude-orange">&#9210; </span><span class="claude-dim">Read(human-identity.md)</span><br><br>
+<span class="claude-bright">Benjamin Askins</span> &middot; <span class="claude-orange">genlevel</span><br><br>
+<span class="claude-text">Software engineer, 36 years. Infrastructure,</span><br>
+<span class="claude-text">distributed systems. Central Coast, NSW.</span><br><br>
+<span class="claude-text">Links: </span><a href="https://github.com/benaskins" class="screen-link claude-blue" target="_blank">github.com/benaskins</a><br><br>
+<span class="claude-dim">&gt;</span> <span class="claude-dim">&#9608;</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="terminal-nav">
+        <div class="terminal-dots" id="terminalDots"></div>
+        <div class="terminal-controls">
+          <button class="terminal-btn" onclick="prevScreen()">&#8592;</button>
+          <button class="terminal-btn terminal-pause" id="pauseBtn" onclick="togglePause()">&#9646;&#9646;</button>
+          <button class="terminal-btn" onclick="nextScreen()">&#8594;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/terminal-overlay.js?v=5dc245de"></script>
 </body>
 </html>
